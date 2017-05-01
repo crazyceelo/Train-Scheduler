@@ -40,4 +40,8 @@ database.ref().on("child_added", function(snapshot){
     '</th><th class="tableFrequency2 text-center">' + snapshot.val().frequency +
     '</th><th class="tableNext"></th>' +
     '<th class="tableMinutes"></th>');
+
+
+// need to figure out how moment.js works
+// // http://uci.bootcampcontent.com/UCI-Coding-Bootcamp/03-17-Class-Content/tree/master/uci20170313-m_w/07-firebase/1-Class-Content/7.3/Activities/01-TimeSheet
 })
