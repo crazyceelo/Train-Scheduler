@@ -15,6 +15,8 @@ var name = "";
 var destination = "";
 var time = "";
 var frequency = "";
+var nextTrain = "";
+var tMinutesTillTrain = "";
 
 // Submit button and push data to database.
 $("#submitButton").on("click", function(event){
@@ -25,23 +27,41 @@ $("#submitButton").on("click", function(event){
   time = $("#time-input").val().trim();
   frequency = $("#frequency-input").val().trim();
 
+  var timeConverted = moment(time, "hh:mm").subtract(1, "years");
+  console.log(timeConverted);
+
+  var currentTime = moment();
+  console.log("Current Time: " + moment(currentTime).format("hh:mm"));
+
+  var diffTime = moment().diff(moment(timeConverted), "minutes");
+  console.log("Difference in Time: " + diffTime);
+
+  var tRemainder = diffTime % frequency;
+  console.log(tRemainder);
+
+  var tMinutesTillTrain = frequency - tRemainder;
+  console.log("minutes till train: " + tMinutesTillTrain);
+
+  var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+  console.log("arrival time: " + moment(nextTrain).format("hh:mm"));
+  var nextArrival = moment(nextTrain).format("hh:mm");
+
   database.ref().push({
     name: name,
     destination: destination,
     time: time,
-    frequency: frequency
+    frequency: frequency,
+    nextArrival: nextArrival,
+    tMinutesTillTrain: tMinutesTillTrain
   })
 })
 
-// pull from database and put on html page.
 database.ref().on("child_added", function(snapshot){
-  $(".table").append('<tr><th class="tableName2">' + snapshot.val().name +
-    '</th><th class="tableDestination2">' + snapshot.val().destination +
-    '</th><th class="tableFrequency2 text-center">' + snapshot.val().frequency +
-    '</th><th class="tableNext"></th>' +
-    '<th class="tableMinutes"></th>');
-
-
-// need to figure out how moment.js works
-// // http://uci.bootcampcontent.com/UCI-Coding-Bootcamp/03-17-Class-Content/tree/master/uci20170313-m_w/07-firebase/1-Class-Content/7.3/Activities/01-TimeSheet
+$(".table").append('<tr><td class="tableName2">' + snapshot.val().name +
+  '</td><td class="tableDestination2">' + snapshot.val().destination +
+  '</td><td class="tableFrequency2 text-center">' + snapshot.val().frequency +
+  '</td><td class="tableNextTrain2 text-center">' + snapshot.val().nextArrival +
+  '</td><td class="tableMinutesTillTrain2 text-center">' + snapshot.val().tMinutesTillTrain);
 })
+
+// pull from database and put on html page.
